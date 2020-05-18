@@ -1,0 +1,28 @@
+.main header {
+  background-image: var(--color-accent-background);
+  color: var(--color-accent-foreground);
+  text-align: center;
+  text-transform: lowercase;
+}
+
+.main h1 {
+  align-items: flex-end;
+  display: flex;
+  font-size: calc(
+    (var(--fluid-hero-min-font-size) * 1px) +
+      (var(--fluid-hero-max-font-size) - var(--fluid-hero-min-font-size)) *
+      (100vw - (var(--fluid-min-screen-size) * 1px)) /
+      (var(--fluid-max-screen-size) - var(--fluid-min-screen-size))
+  );
+  hyphens: auto;
+  justify-content: center;
+  line-height: 1.05;
+  margin: var(--space-xxl) 0 0;
+}
+
+.divider {
+  background-color: var(--color-background);
+  clip-path: url("#header-clip");
+  height: var(--space-xl);
+  margin: -1px 0;
+}

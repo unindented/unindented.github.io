@@ -1,0 +1,22 @@
+.footer {
+  background-image: var(--color-accent-background);
+  color: var(--color-accent-foreground);
+  text-align: center;
+}
+
+.footer a {
+  color: var(--color-accent-link);
+  transition: color 0.1s ease-in-out;
+}
+
+.footer a:focus,
+.footer a:hover {
+  color: var(--color-accent-link-hover);
+}
+
+.divider {
+  background-color: var(--color-background);
+  clip-path: url("#footer-clip");
+  height: var(--space-xl);
+  margin: -1px 0;
+}
