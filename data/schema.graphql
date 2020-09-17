@@ -922,6 +922,68 @@ enum AuditLogOrderField {
 }
 
 """
+Represents a 'automatic_base_change_failed' event on a given pull request.
+"""
+type AutomaticBaseChangeFailedEvent implements Node {
+  """
+  Identifies the actor who performed the event.
+  """
+  actor: Actor
+
+  """
+  Identifies the date and time when the object was created.
+  """
+  createdAt: DateTime!
+  id: ID!
+
+  """
+  The new base for this PR
+  """
+  newBase: String!
+
+  """
+  The old base for this PR
+  """
+  oldBase: String!
+
+  """
+  PullRequest referenced by event.
+  """
+  pullRequest: PullRequest!
+}
+
+"""
+Represents a 'automatic_base_change_succeeded' event on a given pull request.
+"""
+type AutomaticBaseChangeSucceededEvent implements Node {
+  """
+  Identifies the actor who performed the event.
+  """
+  actor: Actor
+
+  """
+  Identifies the date and time when the object was created.
+  """
+  createdAt: DateTime!
+  id: ID!
+
+  """
+  The new base for this PR
+  """
+  newBase: String!
+
+  """
+  The old base for this PR
+  """
+  oldBase: String!
+
+  """
+  PullRequest referenced by event.
+  """
+  pullRequest: PullRequest!
+}
+
+"""
 Represents a 'base_ref_changed' event on a given issue or pull request.
 """
 type BaseRefChangedEvent implements Node {
@@ -1043,6 +1105,10 @@ type Blob implements GitObject & Node {
 
   """
   Indicates whether the Blob is binary or text
+
+  **Upcoming Change on 2019-07-01 UTC**
+  **Description:** Type for `isBinary` will change from `Boolean!` to `Boolean`.
+  **Reason:** The `isBinary` field may return `null` when it cannot determine if a Blob is binary.
   """
   isBinary: Boolean!
 
@@ -3801,25 +3867,6 @@ input ContributionOrder {
   The ordering direction.
   """
   direction: OrderDirection!
-
-  """
-  The field by which to order contributions.
-
-  **Upcoming Change on 2019-10-01 UTC**
-  **Description:** `field` will be removed. Only one order field is supported.
-  **Reason:** `field` will be removed.
-  """
-  field: ContributionOrderField
-}
-
-"""
-Properties by which contribution connections can be ordered.
-"""
-enum ContributionOrderField {
-  """
-  Order contributions by when they were made.
-  """
-  OCCURRED_AT
 }
 
 """
@@ -3945,7 +3992,7 @@ type ContributionsCollection {
     """
     Ordering options for contributions returned from the connection.
     """
-    orderBy: ContributionOrder = {field: OCCURRED_AT, direction: DESC}
+    orderBy: ContributionOrder = {direction: DESC}
   ): CreatedIssueContributionConnection!
 
   """
@@ -4041,7 +4088,7 @@ type ContributionsCollection {
     """
     Ordering options for contributions returned from the connection.
     """
-    orderBy: ContributionOrder = {field: OCCURRED_AT, direction: DESC}
+    orderBy: ContributionOrder = {direction: DESC}
   ): CreatedPullRequestContributionConnection!
 
   """
@@ -4091,7 +4138,7 @@ type ContributionsCollection {
     """
     Ordering options for contributions returned from the connection.
     """
-    orderBy: ContributionOrder = {field: OCCURRED_AT, direction: DESC}
+    orderBy: ContributionOrder = {direction: DESC}
   ): CreatedPullRequestReviewContributionConnection!
 
   """
@@ -4136,7 +4183,7 @@ type ContributionsCollection {
     """
     Ordering options for contributions returned from the connection.
     """
-    orderBy: ContributionOrder = {field: OCCURRED_AT, direction: DESC}
+    orderBy: ContributionOrder = {direction: DESC}
   ): CreatedRepositoryContributionConnection!
 
   """
@@ -8563,6 +8610,41 @@ type EnterpriseOwnerInfo {
   ): EnterpriseAdministratorInvitationConnection!
 
   """
+  A list of pending collaborator invitations across the repositories in the enterprise.
+  """
+  pendingCollaboratorInvitations(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Ordering options for pending repository collaborator invitations returned from the connection.
+    """
+    orderBy: RepositoryInvitationOrder = {field: CREATED_AT, direction: DESC}
+
+    """
+    The search string to look for.
+    """
+    query: String
+  ): RepositoryInvitationConnection!
+
+  """
   A list of pending collaborators across the repositories in the enterprise.
   """
   pendingCollaborators(
@@ -8589,13 +8671,13 @@ type EnterpriseOwnerInfo {
     """
     Ordering options for pending repository collaborator invitations returned from the connection.
     """
-    orderBy: RepositoryInvitationOrder = {field: INVITEE_LOGIN, direction: ASC}
+    orderBy: RepositoryInvitationOrder = {field: CREATED_AT, direction: DESC}
 
     """
     The search string to look for.
     """
     query: String
-  ): EnterprisePendingCollaboratorConnection!
+  ): EnterprisePendingCollaboratorConnection! @deprecated(reason: "Repository invitations can now be associated with an email, not only an invitee. Use the `pendingCollaboratorInvitations` field instead. Removal on 2020-10-01 UTC.")
 
   """
   A list of pending member invitations for organizations in the enterprise.
@@ -11804,7 +11886,7 @@ type IssueContributionsByRepository {
     """
     Ordering options for contributions returned from the connection.
     """
-    orderBy: ContributionOrder = {field: OCCURRED_AT, direction: DESC}
+    orderBy: ContributionOrder = {direction: DESC}
   ): CreatedIssueContributionConnection!
 
   """
@@ -13019,11 +13101,6 @@ type MarketplaceListing implements Node {
   fullDescriptionHTML: HTML!
 
   """
-  Whether this listing has been submitted for review from GitHub for approval to be displayed in the Marketplace.
-  """
-  hasApprovalBeenRequested: Boolean! @deprecated(reason: "`hasApprovalBeenRequested` will be removed. Use `isVerificationPendingFromDraft` instead. Removal on 2019-10-01 UTC.")
-
-  """
   Does this listing have any plans with a free trial?
   """
   hasPublishedFreeTrialPlans: Boolean!
@@ -13055,19 +13132,9 @@ type MarketplaceListing implements Node {
   installedForViewer: Boolean!
 
   """
-  Whether this listing has been approved for display in the Marketplace.
-  """
-  isApproved: Boolean! @deprecated(reason: "`isApproved` will be removed. Use `isPublic` instead. Removal on 2019-10-01 UTC.")
-
-  """
   Whether this listing has been removed from the Marketplace.
   """
   isArchived: Boolean!
-
-  """
-  Whether this listing has been removed from the Marketplace.
-  """
-  isDelisted: Boolean! @deprecated(reason: "`isDelisted` will be removed. Use `isArchived` instead. Removal on 2019-10-01 UTC.")
 
   """
   Whether this listing is still an editable draft that has not been submitted
@@ -17273,6 +17340,11 @@ enum OrgRemoveMemberAuditEntryReason {
   SAML_SSO_ENFORCEMENT_REQUIRES_EXTERNAL_IDENTITY
 
   """
+  User was removed from organization during account recovery
+  """
+  TWO_FACTOR_ACCOUNT_RECOVERY
+
+  """
   The organization required 2FA of its billing managers and this user did not have 2FA enabled.
   """
   TWO_FACTOR_REQUIREMENT_NON_COMPLIANCE
@@ -18196,7 +18268,7 @@ type OrgUpdateMemberRepositoryInvitationPermissionAuditEntry implements AuditEnt
 """
 An account on GitHub, with one or more owners, that has repositories, members and teams.
 """
-type Organization implements Actor & MemberStatusable & Node & PackageOwner & ProfileOwner & ProjectOwner & RegistryPackageOwner & RegistryPackageSearch & RepositoryOwner & Sponsorable & UniformResourceLocatable {
+type Organization implements Actor & MemberStatusable & Node & PackageOwner & ProfileOwner & ProjectOwner & RepositoryOwner & Sponsorable & UniformResourceLocatable {
   """
   Determine if this repository owner has any items that can be pinned to their profile.
   """
@@ -18277,6 +18349,41 @@ type Organization implements Actor & MemberStatusable & Node & PackageOwner & Pr
   """
   email: String
   id: ID!
+
+  """
+  The setting value for whether the organization has an IP allow list enabled.
+  """
+  ipAllowListEnabledSetting: IpAllowListEnabledSettingValue!
+
+  """
+  The IP addresses that are allowed to access resources owned by the organization.
+  """
+  ipAllowListEntries(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Ordering options for IP allow list entries returned.
+    """
+    orderBy: IpAllowListEntryOrder = {field: ALLOW_LIST_VALUE, direction: ASC}
+  ): IpAllowListEntryConnection!
 
   """
   Whether the organization has verified its profile email and website.
@@ -18409,10 +18516,15 @@ type Organization implements Actor & MemberStatusable & Node & PackageOwner & Pr
     orderBy: PackageOrder = {field: CREATED_AT, direction: DESC}
 
     """
+    Filter registry package by type.
+    """
+    packageType: PackageType
+
+    """
     Find packages in a repository by ID.
     """
     repositoryId: ID
-  ): PackageConnection! @preview(toggledBy: "packages-preview")
+  ): PackageConnection!
 
   """
   A list of users who have been invited to join this organization.
@@ -18505,60 +18617,6 @@ type Organization implements Actor & MemberStatusable & Node & PackageOwner & Pr
   pinnedItemsRemaining: Int!
 
   """
-  A list of repositories this user has pinned to their profile
-  """
-  pinnedRepositories(
-    """
-    Array of viewer's affiliation options for repositories returned from the
-    connection. For example, OWNER will include only repositories that the
-    current viewer owns.
-    """
-    affiliations: [RepositoryAffiliation]
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: String
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: String
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int
-
-    """
-    If non-null, filters repositories according to whether they have been locked
-    """
-    isLocked: Boolean
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-
-    """
-    Ordering options for repositories returned from the connection
-    """
-    orderBy: RepositoryOrder
-
-    """
-    Array of owner's affiliation options for repositories returned from the
-    connection. For example, OWNER will include only repositories that the
-    organization or user being viewed owns.
-    """
-    ownerAffiliations: [RepositoryAffiliation] = [OWNER, COLLABORATOR]
-
-    """
-    If non-null, filters repositories according to privacy
-    """
-    privacy: RepositoryPrivacy
-  ): RepositoryConnection! @deprecated(reason: "pinnedRepositories will be removed Use ProfileOwner.pinnedItems instead. Removal on 2019-10-01 UTC.")
-
-  """
   Find project by number.
   """
   project(
@@ -18617,96 +18675,6 @@ type Organization implements Actor & MemberStatusable & Node & PackageOwner & Pr
   The HTTP URL listing organization's projects
   """
   projectsUrl: URI!
-
-  """
-  A list of registry packages under the owner.
-  """
-  registryPackages(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: String
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: String
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-
-    """
-    Find registry package by name.
-    """
-    name: String
-
-    """
-    Find registry packages by their names.
-    """
-    names: [String]
-
-    """
-    Filter registry package by type.
-    """
-    packageType: RegistryPackageType
-
-    """
-    Filter registry package by whether it is publicly visible
-    """
-    publicOnly: Boolean = false
-
-    """
-    Filter registry package by type (string).
-    """
-    registryPackageType: String
-
-    """
-    Find registry packages in a repository.
-    """
-    repositoryId: ID
-  ): RegistryPackageConnection! @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageOwner` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  A list of registry packages for a particular search query.
-  """
-  registryPackagesForQuery(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: String
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: String
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-
-    """
-    Filter registry package by type.
-    """
-    packageType: RegistryPackageType
-
-    """
-    Find registry package by search query.
-    """
-    query: String
-  ): RegistryPackageConnection! @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageSearch` object instead. Removal on 2020-04-01 UTC.")
 
   """
   A list of repositories that the user owns.
@@ -18944,6 +18912,11 @@ type Organization implements Actor & MemberStatusable & Node & PackageOwner & Pr
   The HTTP URL listing organization's teams
   """
   teamsUrl: URI!
+
+  """
+  The organization's Twitter username.
+  """
+  twitterUsername: String
 
   """
   Identifies the date and time when the object was last updated.
@@ -19501,7 +19474,7 @@ type OrganizationsHovercardContext implements HovercardContext {
 """
 Information for an uploaded package.
 """
-type Package implements Node @preview(toggledBy: "packages-preview") {
+type Package implements Node {
   id: ID!
 
   """
@@ -19582,7 +19555,7 @@ type PackageConnection {
   """
   A list of nodes.
   """
-  nodes: [Package] @preview(toggledBy: "packages-preview")
+  nodes: [Package]
 
   """
   Information to aid in pagination.
@@ -19607,13 +19580,13 @@ type PackageEdge {
   """
   The item at the end of the edge.
   """
-  node: Package @preview(toggledBy: "packages-preview")
+  node: Package
 }
 
 """
 A file in a package version.
 """
-type PackageFile implements Node @preview(toggledBy: "packages-preview") {
+type PackageFile implements Node {
   id: ID!
 
   """
@@ -19669,7 +19642,7 @@ type PackageFileConnection {
   """
   A list of nodes.
   """
-  nodes: [PackageFile] @preview(toggledBy: "packages-preview")
+  nodes: [PackageFile]
 
   """
   Information to aid in pagination.
@@ -19694,13 +19667,13 @@ type PackageFileEdge {
   """
   The item at the end of the edge.
   """
-  node: PackageFile @preview(toggledBy: "packages-preview")
+  node: PackageFile
 }
 
 """
 Ways in which lists of package files can be ordered upon return.
 """
-input PackageFileOrder @preview(toggledBy: "packages-preview") {
+input PackageFileOrder {
   """
   The direction in which to order package files by the specified field.
   """
@@ -19715,7 +19688,7 @@ input PackageFileOrder @preview(toggledBy: "packages-preview") {
 """
 Properties by which package file connections can be ordered.
 """
-enum PackageFileOrderField @preview(toggledBy: "packages-preview") {
+enum PackageFileOrderField {
   """
   Order package files by creation time
   """
@@ -19725,7 +19698,7 @@ enum PackageFileOrderField @preview(toggledBy: "packages-preview") {
 """
 Ways in which lists of packages can be ordered upon return.
 """
-input PackageOrder @preview(toggledBy: "packages-preview") {
+input PackageOrder {
   """
   The direction in which to order packages by the specified field.
   """
@@ -19740,7 +19713,7 @@ input PackageOrder @preview(toggledBy: "packages-preview") {
 """
 Properties by which package connections can be ordered.
 """
-enum PackageOrderField @preview(toggledBy: "packages-preview") {
+enum PackageOrderField {
   """
   Order packages by creation time
   """
@@ -19750,7 +19723,7 @@ enum PackageOrderField @preview(toggledBy: "packages-preview") {
 """
 Represents an owner of a package.
 """
-interface PackageOwner @preview(toggledBy: "packages-preview") {
+interface PackageOwner {
   id: ID!
 
   """
@@ -19788,16 +19761,21 @@ interface PackageOwner @preview(toggledBy: "packages-preview") {
     orderBy: PackageOrder = {field: CREATED_AT, direction: DESC}
 
     """
+    Filter registry package by type.
+    """
+    packageType: PackageType
+
+    """
     Find packages in a repository by ID.
     """
     repositoryId: ID
-  ): PackageConnection! @preview(toggledBy: "packages-preview")
+  ): PackageConnection!
 }
 
 """
 Represents a object that contains package activity statistics such as downloads.
 """
-type PackageStatistics @preview(toggledBy: "packages-preview") {
+type PackageStatistics {
   """
   Number of times the package was downloaded since it was created.
   """
@@ -19807,7 +19785,7 @@ type PackageStatistics @preview(toggledBy: "packages-preview") {
 """
 A version tag contains the mapping between a tag name and a version.
 """
-type PackageTag implements Node @preview(toggledBy: "packages-preview") {
+type PackageTag implements Node {
   id: ID!
 
   """
@@ -19864,7 +19842,7 @@ enum PackageType {
 """
 Information about a specific package version.
 """
-type PackageVersion implements Node @preview(toggledBy: "packages-preview") {
+type PackageVersion implements Node {
   """
   List of files associated with this package version
   """
@@ -19949,7 +19927,7 @@ type PackageVersionConnection {
   """
   A list of nodes.
   """
-  nodes: [PackageVersion] @preview(toggledBy: "packages-preview")
+  nodes: [PackageVersion]
 
   """
   Information to aid in pagination.
@@ -19974,13 +19952,13 @@ type PackageVersionEdge {
   """
   The item at the end of the edge.
   """
-  node: PackageVersion @preview(toggledBy: "packages-preview")
+  node: PackageVersion
 }
 
 """
 Ways in which lists of package versions can be ordered upon return.
 """
-input PackageVersionOrder @preview(toggledBy: "packages-preview") {
+input PackageVersionOrder {
   """
   The direction in which to order package versions by the specified field.
   """
@@ -19995,7 +19973,7 @@ input PackageVersionOrder @preview(toggledBy: "packages-preview") {
 """
 Properties by which package version connections can be ordered.
 """
-enum PackageVersionOrderField @preview(toggledBy: "packages-preview") {
+enum PackageVersionOrderField {
   """
   Order package versions by creation time
   """
@@ -20005,7 +19983,7 @@ enum PackageVersionOrderField @preview(toggledBy: "packages-preview") {
 """
 Represents a object that contains package version activity statistics such as downloads.
 """
-type PackageVersionStatistics @preview(toggledBy: "packages-preview") {
+type PackageVersionStatistics {
   """
   Number of times the package was downloaded since it was created.
   """
@@ -22370,7 +22348,7 @@ type PullRequestContributionsByRepository {
     """
     Ordering options for contributions returned from the connection.
     """
-    orderBy: ContributionOrder = {field: OCCURRED_AT, direction: DESC}
+    orderBy: ContributionOrder = {direction: DESC}
   ): CreatedPullRequestContributionConnection!
 
   """
@@ -23052,7 +23030,7 @@ type PullRequestReviewContributionsByRepository {
     """
     Ordering options for contributions returned from the connection.
     """
-    orderBy: ContributionOrder = {field: OCCURRED_AT, direction: DESC}
+    orderBy: ContributionOrder = {direction: DESC}
   ): CreatedPullRequestReviewContributionConnection!
 
   """
@@ -23375,7 +23353,7 @@ type PullRequestTimelineItemEdge {
 """
 An item in a pull request timeline
 """
-union PullRequestTimelineItems = AddedToProjectEvent | AssignedEvent | BaseRefChangedEvent | BaseRefForcePushedEvent | ClosedEvent | CommentDeletedEvent | ConnectedEvent | ConvertToDraftEvent | ConvertedNoteToIssueEvent | CrossReferencedEvent | DemilestonedEvent | DeployedEvent | DeploymentEnvironmentChangedEvent | DisconnectedEvent | HeadRefDeletedEvent | HeadRefForcePushedEvent | HeadRefRestoredEvent | IssueComment | LabeledEvent | LockedEvent | MarkedAsDuplicateEvent | MentionedEvent | MergedEvent | MilestonedEvent | MovedColumnsInProjectEvent | PinnedEvent | PullRequestCommit | PullRequestCommitCommentThread | PullRequestReview | PullRequestReviewThread | PullRequestRevisionMarker | ReadyForReviewEvent | ReferencedEvent | RemovedFromProjectEvent | RenamedTitleEvent | ReopenedEvent | ReviewDismissedEvent | ReviewRequestRemovedEvent | ReviewRequestedEvent | SubscribedEvent | TransferredEvent | UnassignedEvent | UnlabeledEvent | UnlockedEvent | UnmarkedAsDuplicateEvent | UnpinnedEvent | UnsubscribedEvent | UserBlockedEvent
+union PullRequestTimelineItems = AddedToProjectEvent | AssignedEvent | AutomaticBaseChangeFailedEvent | AutomaticBaseChangeSucceededEvent | BaseRefChangedEvent | BaseRefForcePushedEvent | ClosedEvent | CommentDeletedEvent | ConnectedEvent | ConvertToDraftEvent | ConvertedNoteToIssueEvent | CrossReferencedEvent | DemilestonedEvent | DeployedEvent | DeploymentEnvironmentChangedEvent | DisconnectedEvent | HeadRefDeletedEvent | HeadRefForcePushedEvent | HeadRefRestoredEvent | IssueComment | LabeledEvent | LockedEvent | MarkedAsDuplicateEvent | MentionedEvent | MergedEvent | MilestonedEvent | MovedColumnsInProjectEvent | PinnedEvent | PullRequestCommit | PullRequestCommitCommentThread | PullRequestReview | PullRequestReviewThread | PullRequestRevisionMarker | ReadyForReviewEvent | ReferencedEvent | RemovedFromProjectEvent | RenamedTitleEvent | ReopenedEvent | ReviewDismissedEvent | ReviewRequestRemovedEvent | ReviewRequestedEvent | SubscribedEvent | TransferredEvent | UnassignedEvent | UnlabeledEvent | UnlockedEvent | UnmarkedAsDuplicateEvent | UnpinnedEvent | UnsubscribedEvent | UserBlockedEvent
 
 """
 The connection type for PullRequestTimelineItems.
@@ -23445,6 +23423,16 @@ enum PullRequestTimelineItemsItemType {
   Represents an 'assigned' event on any assignable object.
   """
   ASSIGNED_EVENT
+
+  """
+  Represents a 'automatic_base_change_failed' event on a given pull request.
+  """
+  AUTOMATIC_BASE_CHANGE_FAILED_EVENT
+
+  """
+  Represents a 'automatic_base_change_succeeded' event on a given pull request.
+  """
+  AUTOMATIC_BASE_CHANGE_SUCCEEDED_EVENT
 
   """
   Represents a 'base_ref_changed' event on a given issue or pull request.
@@ -24663,6 +24651,10 @@ type Ref implements Node {
 
   """
   The object the ref points to.
+
+  **Upcoming Change on 2019-07-01 UTC**
+  **Description:** Type for `target` will change from `GitObject!` to `GitObject`.
+  **Reason:** The `target` field may return `null` values and is changing to nullable
   """
   target: GitObject!
 }
@@ -24836,941 +24828,6 @@ type RegenerateEnterpriseIdentityProviderRecoveryCodesPayload {
   The identity provider for the enterprise.
   """
   identityProvider: EnterpriseIdentityProvider
-}
-
-"""
-A registry package contains the content for an uploaded package.
-"""
-type RegistryPackage implements Node {
-  """
-  The package type color
-  """
-  color: String! @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `Package` object instead. Removal on 2020-04-01 UTC.")
-  id: ID!
-
-  """
-  Find the latest version for the package.
-  """
-  latestVersion: RegistryPackageVersion @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `Package` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  Identifies the title of the package.
-  """
-  name: String! @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `Package` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  Identifies the title of the package, with the owner prefixed.
-  """
-  nameWithOwner: String! @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `Package` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  Find the package file identified by the guid.
-  """
-  packageFileByGuid(
-    """
-    The unique identifier of the package_file
-    """
-    guid: String!
-  ): RegistryPackageFile @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `Package` object. Removal on 2020-04-01 UTC.")
-
-  """
-  Find the package file identified by the sha256.
-  """
-  packageFileBySha256(
-    """
-    The SHA256 of the package_file
-    """
-    sha256: String!
-  ): RegistryPackageFile @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `Package` object. Removal on 2020-04-01 UTC.")
-
-  """
-  Identifies the type of the package.
-  """
-  packageType: RegistryPackageType! @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `Package` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  List the prerelease versions for this package.
-  """
-  preReleaseVersions(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: String
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: String
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-  ): RegistryPackageVersionConnection @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `Package` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  The type of the package.
-  """
-  registryPackageType: String @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `Package` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  repository that the release is associated with
-  """
-  repository: Repository @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `Package` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  Statistics about package activity.
-  """
-  statistics: RegistryPackageStatistics @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `Package` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  list of tags for this package
-  """
-  tags(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: String
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: String
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-  ): RegistryPackageTagConnection! @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `Package` object. Removal on 2020-04-01 UTC.")
-
-  """
-  List the topics for this package.
-  """
-  topics(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: String
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: String
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-  ): TopicConnection @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `Package` object. Removal on 2020-04-01 UTC.")
-
-  """
-  Find package version by version string.
-  """
-  version(
-    """
-    The package version.
-    """
-    version: String!
-  ): RegistryPackageVersion @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `Package` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  Find package version by version string.
-  """
-  versionByPlatform(
-    """
-    Find a registry package for a specific platform.
-    """
-    platform: String!
-
-    """
-    The package version.
-    """
-    version: String!
-  ): RegistryPackageVersion @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `Package` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  Find package version by manifest SHA256.
-  """
-  versionBySha256(
-    """
-    The package SHA256 digest.
-    """
-    sha256: String!
-  ): RegistryPackageVersion @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `Package` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  list of versions for this package
-  """
-  versions(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: String
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: String
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-  ): RegistryPackageVersionConnection! @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `Package` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  List package versions with a specific metadatum.
-  """
-  versionsByMetadatum(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: String
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: String
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-
-    """
-    Filter on a specific metadatum.
-    """
-    metadatum: RegistryPackageMetadatum!
-  ): RegistryPackageVersionConnection @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `Package` object instead. Removal on 2020-04-01 UTC.")
-}
-
-"""
-The connection type for RegistryPackage.
-"""
-type RegistryPackageConnection {
-  """
-  A list of edges.
-  """
-  edges: [RegistryPackageEdge]
-
-  """
-  A list of nodes.
-  """
-  nodes: [RegistryPackage]
-
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-
-  """
-  Identifies the total count of items in the connection.
-  """
-  totalCount: Int!
-}
-
-"""
-A package dependency contains the information needed to satisfy a dependency.
-"""
-type RegistryPackageDependency implements Node {
-  """
-  Identifies the type of dependency.
-  """
-  dependencyType: RegistryPackageDependencyType! @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageDependency` object instead. Removal on 2020-04-01 UTC.")
-  id: ID!
-
-  """
-  Identifies the name of the dependency.
-  """
-  name: String! @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageDependency` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  Identifies the version of the dependency.
-  """
-  version: String! @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageDependency` object instead. Removal on 2020-04-01 UTC.")
-}
-
-"""
-The connection type for RegistryPackageDependency.
-"""
-type RegistryPackageDependencyConnection {
-  """
-  A list of edges.
-  """
-  edges: [RegistryPackageDependencyEdge]
-
-  """
-  A list of nodes.
-  """
-  nodes: [RegistryPackageDependency]
-
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-
-  """
-  Identifies the total count of items in the connection.
-  """
-  totalCount: Int!
-}
-
-"""
-An edge in a connection.
-"""
-type RegistryPackageDependencyEdge {
-  """
-  A cursor for use in pagination.
-  """
-  cursor: String!
-
-  """
-  The item at the end of the edge.
-  """
-  node: RegistryPackageDependency
-}
-
-"""
-The possible types of a registry package dependency.
-"""
-enum RegistryPackageDependencyType {
-  """
-  An optional registry package dependency type.
-  """
-  BUNDLED
-
-  """
-  A default registry package dependency type.
-  """
-  DEFAULT
-
-  """
-  A dev registry package dependency type.
-  """
-  DEV
-
-  """
-  An optional registry package dependency type.
-  """
-  OPTIONAL
-
-  """
-  A peer registry package dependency type.
-  """
-  PEER
-
-  """
-  A test registry package dependency type.
-  """
-  TEST
-}
-
-"""
-An edge in a connection.
-"""
-type RegistryPackageEdge {
-  """
-  A cursor for use in pagination.
-  """
-  cursor: String!
-
-  """
-  The item at the end of the edge.
-  """
-  node: RegistryPackage
-}
-
-"""
-A file in a specific registry package version.
-"""
-type RegistryPackageFile implements Node {
-  """
-  A unique identifier for this file.
-  """
-  guid: String @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageFile` object instead. Removal on 2020-04-01 UTC.")
-  id: ID!
-
-  """
-  Identifies the md5.
-  """
-  md5: String @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageFile` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  URL to download the asset metadata.
-  """
-  metadataUrl: URI! @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageFile` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  Name of the file
-  """
-  name: String! @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageFile` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  The package version this file belongs to.
-  """
-  packageVersion: RegistryPackageVersion! @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageFile` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  Identifies the sha1.
-  """
-  sha1: String @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageFile` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  Identifies the sha256.
-  """
-  sha256: String @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageFile` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  Identifies the size.
-  """
-  size: Int @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageFile` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  Identifies the date and time when the object was last updated.
-  """
-  updatedAt: DateTime!
-
-  """
-  URL to download the asset.
-  """
-  url: URI! @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageFile` object instead. Removal on 2020-04-01 UTC.")
-}
-
-"""
-The connection type for RegistryPackageFile.
-"""
-type RegistryPackageFileConnection {
-  """
-  A list of edges.
-  """
-  edges: [RegistryPackageFileEdge]
-
-  """
-  A list of nodes.
-  """
-  nodes: [RegistryPackageFile]
-
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-
-  """
-  Identifies the total count of items in the connection.
-  """
-  totalCount: Int!
-}
-
-"""
-An edge in a connection.
-"""
-type RegistryPackageFileEdge {
-  """
-  A cursor for use in pagination.
-  """
-  cursor: String!
-
-  """
-  The item at the end of the edge.
-  """
-  node: RegistryPackageFile
-}
-
-"""
-Represents a single registry metadatum
-"""
-input RegistryPackageMetadatum {
-  """
-  Name of the metadatum.
-  """
-  name: String!
-
-  """
-  True, if the metadatum can be updated if it already exists
-  """
-  update: Boolean
-
-  """
-  Value of the metadatum.
-  """
-  value: String!
-}
-
-"""
-Represents an owner of a registry package.
-"""
-interface RegistryPackageOwner {
-  id: ID!
-
-  """
-  A list of registry packages under the owner.
-  """
-  registryPackages(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: String
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: String
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-
-    """
-    Find registry package by name.
-    """
-    name: String
-
-    """
-    Find registry packages by their names.
-    """
-    names: [String]
-
-    """
-    Filter registry package by type.
-    """
-    packageType: RegistryPackageType
-
-    """
-    Filter registry package by whether it is publicly visible
-    """
-    publicOnly: Boolean = false
-
-    """
-    Filter registry package by type (string).
-    """
-    registryPackageType: String
-
-    """
-    Find registry packages in a repository.
-    """
-    repositoryId: ID
-  ): RegistryPackageConnection! @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageOwner` object instead. Removal on 2020-04-01 UTC.")
-}
-
-"""
-Represents an interface to search packages on an object.
-"""
-interface RegistryPackageSearch {
-  id: ID!
-
-  """
-  A list of registry packages for a particular search query.
-  """
-  registryPackagesForQuery(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: String
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: String
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-
-    """
-    Filter registry package by type.
-    """
-    packageType: RegistryPackageType
-
-    """
-    Find registry package by search query.
-    """
-    query: String
-  ): RegistryPackageConnection! @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageSearch` object instead. Removal on 2020-04-01 UTC.")
-}
-
-"""
-Represents a object that contains package activity statistics such as downloads.
-"""
-type RegistryPackageStatistics {
-  """
-  Number of times the package was downloaded this month.
-  """
-  downloadsThisMonth: Int! @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageStatistics` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  Number of times the package was downloaded this week.
-  """
-  downloadsThisWeek: Int! @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageStatistics` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  Number of times the package was downloaded this year.
-  """
-  downloadsThisYear: Int! @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageStatistics` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  Number of times the package was downloaded today.
-  """
-  downloadsToday: Int! @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageStatistics` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  Number of times the package was downloaded since it was created.
-  """
-  downloadsTotalCount: Int! @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageStatistics` object instead. Removal on 2020-04-01 UTC.")
-}
-
-"""
-A version tag contains the mapping between a tag name and a version.
-"""
-type RegistryPackageTag implements Node {
-  id: ID!
-
-  """
-  Identifies the tag name of the version.
-  """
-  name: String! @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageTag` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  version that the tag is associated with
-  """
-  version: RegistryPackageVersion @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageTag` object instead. Removal on 2020-04-01 UTC.")
-}
-
-"""
-The connection type for RegistryPackageTag.
-"""
-type RegistryPackageTagConnection {
-  """
-  A list of edges.
-  """
-  edges: [RegistryPackageTagEdge]
-
-  """
-  A list of nodes.
-  """
-  nodes: [RegistryPackageTag]
-
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-
-  """
-  Identifies the total count of items in the connection.
-  """
-  totalCount: Int!
-}
-
-"""
-An edge in a connection.
-"""
-type RegistryPackageTagEdge {
-  """
-  A cursor for use in pagination.
-  """
-  cursor: String!
-
-  """
-  The item at the end of the edge.
-  """
-  node: RegistryPackageTag
-}
-
-"""
-The possible types of a registry package.
-"""
-enum RegistryPackageType {
-  """
-  A debian package.
-  """
-  DEBIAN
-
-  """
-  A docker image.
-  """
-  DOCKER
-
-  """
-  A maven registry package.
-  """
-  MAVEN
-
-  """
-  An npm registry package.
-  """
-  NPM
-
-  """
-  A nuget package.
-  """
-  NUGET
-
-  """
-  A python package.
-  """
-  PYTHON
-
-  """
-  A rubygems registry package.
-  """
-  RUBYGEMS
-}
-
-"""
-A package version contains the information about a specific package version.
-"""
-type RegistryPackageVersion implements Node {
-  """
-  Whether or not this version has been deleted.
-  """
-  deleted: Boolean! @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageVersion` object instead. Removal on 2020-04-01 UTC.") @preview(toggledBy: "package-deletes-preview")
-
-  """
-  list of dependencies for this package
-  """
-  dependencies(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: String
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: String
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-
-    """
-    Find dependencies by type.
-    """
-    type: RegistryPackageDependencyType
-  ): RegistryPackageDependencyConnection! @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageVersion` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  A file associated with this registry package version
-  """
-  fileByName(
-    """
-    A specific file to find.
-    """
-    filename: String!
-  ): RegistryPackageFile @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageVersion` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  List of files associated with this registry package version
-  """
-  files(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: String
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: String
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-  ): RegistryPackageFileConnection! @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageVersion` object instead. Removal on 2020-04-01 UTC.")
-  id: ID!
-
-  """
-  A single line of text to install this package version.
-  """
-  installationCommand: String @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageVersion` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  Identifies the package manifest for this package version.
-  """
-  manifest: String @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageVersion` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  Identifies the platform this version was built for.
-  """
-  platform: String @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageVersion` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  Indicates whether this version is a pre-release.
-  """
-  preRelease: Boolean! @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageVersion` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  The README of this package version
-  """
-  readme: String @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageVersion` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  The HTML README of this package version
-  """
-  readmeHtml: HTML @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageVersion` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  Registry package associated with this version.
-  """
-  registryPackage: RegistryPackage @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageVersion` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  Release associated with this package.
-  """
-  release: Release @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageVersion` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  Identifies the sha256.
-  """
-  sha256: String @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageVersion` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  Identifies the size.
-  """
-  size: Int @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageVersion` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  Statistics about package activity.
-  """
-  statistics: RegistryPackageVersionStatistics @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageVersion` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  Identifies the package version summary.
-  """
-  summary: String @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageVersion` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  Time at which the most recent file upload for this package version finished
-  """
-  updatedAt: DateTime! @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageVersion` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  Identifies the version number.
-  """
-  version: String! @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageVersion` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  Can the current viewer edit this Package version.
-  """
-  viewerCanEdit: Boolean! @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageVersion` object instead. Removal on 2020-04-01 UTC.")
-}
-
-"""
-The connection type for RegistryPackageVersion.
-"""
-type RegistryPackageVersionConnection {
-  """
-  A list of edges.
-  """
-  edges: [RegistryPackageVersionEdge]
-
-  """
-  A list of nodes.
-  """
-  nodes: [RegistryPackageVersion]
-
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-
-  """
-  Identifies the total count of items in the connection.
-  """
-  totalCount: Int!
-}
-
-"""
-An edge in a connection.
-"""
-type RegistryPackageVersionEdge {
-  """
-  A cursor for use in pagination.
-  """
-  cursor: String!
-
-  """
-  The item at the end of the edge.
-  """
-  node: RegistryPackageVersion
-}
-
-"""
-Represents a object that contains package version activity statistics such as downloads.
-"""
-type RegistryPackageVersionStatistics {
-  """
-  Number of times the package was downloaded this month.
-  """
-  downloadsThisMonth: Int! @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageVersionStatistics` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  Number of times the package was downloaded this week.
-  """
-  downloadsThisWeek: Int! @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageVersionStatistics` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  Number of times the package was downloaded this year.
-  """
-  downloadsThisYear: Int! @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageVersionStatistics` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  Number of times the package was downloaded today.
-  """
-  downloadsToday: Int! @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageVersionStatistics` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  Number of times the package was downloaded since it was created.
-  """
-  downloadsTotalCount: Int! @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageVersionStatistics` object instead. Removal on 2020-04-01 UTC.")
 }
 
 """
@@ -28855,7 +27912,7 @@ enum ReportedContentClassifiers {
 """
 A repository contains the content for a project.
 """
-type Repository implements Node & PackageOwner & ProjectOwner & RegistryPackageOwner & RegistryPackageSearch & RepositoryInfo & Starrable & Subscribable & UniformResourceLocatable {
+type Repository implements Node & PackageOwner & ProjectOwner & RepositoryInfo & Starrable & Subscribable & UniformResourceLocatable {
   """
   A list of users that can be assigned to issues in this repository.
   """
@@ -29536,10 +28593,15 @@ type Repository implements Node & PackageOwner & ProjectOwner & RegistryPackageO
     orderBy: PackageOrder = {field: CREATED_AT, direction: DESC}
 
     """
+    Filter registry package by type.
+    """
+    packageType: PackageType
+
+    """
     Find packages in a repository by ID.
     """
     repositoryId: ID
-  ): PackageConnection! @preview(toggledBy: "packages-preview")
+  ): PackageConnection!
 
   """
   The repository parent, if this is a fork.
@@ -29761,96 +28823,6 @@ type Repository implements Node & PackageOwner & ProjectOwner & RegistryPackageO
     """
     refPrefix: String!
   ): RefConnection
-
-  """
-  A list of registry packages under the owner.
-  """
-  registryPackages(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: String
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: String
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-
-    """
-    Find registry package by name.
-    """
-    name: String
-
-    """
-    Find registry packages by their names.
-    """
-    names: [String]
-
-    """
-    Filter registry package by type.
-    """
-    packageType: RegistryPackageType
-
-    """
-    Filter registry package by whether it is publicly visible
-    """
-    publicOnly: Boolean = false
-
-    """
-    Filter registry package by type (string).
-    """
-    registryPackageType: String
-
-    """
-    Find registry packages in a repository.
-    """
-    repositoryId: ID
-  ): RegistryPackageConnection! @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageOwner` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  A list of registry packages for a particular search query.
-  """
-  registryPackagesForQuery(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: String
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: String
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-
-    """
-    Filter registry package by type.
-    """
-    packageType: RegistryPackageType
-
-    """
-    Find registry package by search query.
-    """
-    query: String
-  ): RegistryPackageConnection! @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageSearch` object instead. Removal on 2020-04-01 UTC.")
 
   """
   Lookup a single release given various criteria.
@@ -30192,6 +29164,10 @@ type RepositoryCollaboratorEdge {
 
   """
   The permission the user has on the repository.
+
+  **Upcoming Change on 2020-10-01 UTC**
+  **Description:** Type for `permission` will change from `RepositoryPermission!` to `String`.
+  **Reason:** This field may return additional values
   """
   permission: RepositoryPermission!
 
@@ -30425,12 +29401,16 @@ interface RepositoryInfo {
 An invitation for a user to be added to a repository.
 """
 type RepositoryInvitation implements Node {
+  """
+  The email address that received the invitation.
+  """
+  email: String
   id: ID!
 
   """
   The user who received the invitation.
   """
-  invitee: User!
+  invitee: User
 
   """
   The user who created the invitation.
@@ -30439,6 +29419,10 @@ type RepositoryInvitation implements Node {
 
   """
   The permission granted on this repository by this invitation.
+
+  **Upcoming Change on 2020-10-01 UTC**
+  **Description:** Type for `permission` will change from `RepositoryPermission!` to `String`.
+  **Reason:** This field may return additional values
   """
   permission: RepositoryPermission!
 
@@ -30446,6 +29430,46 @@ type RepositoryInvitation implements Node {
   The Repository the user is invited to.
   """
   repository: RepositoryInfo
+}
+
+"""
+The connection type for RepositoryInvitation.
+"""
+type RepositoryInvitationConnection {
+  """
+  A list of edges.
+  """
+  edges: [RepositoryInvitationEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [RepositoryInvitation]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  Identifies the total count of items in the connection.
+  """
+  totalCount: Int!
+}
+
+"""
+An edge in a connection.
+"""
+type RepositoryInvitationEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: RepositoryInvitation
 }
 
 """
@@ -30475,7 +29499,7 @@ enum RepositoryInvitationOrderField {
   """
   Order repository invitations by invitee login
   """
-  INVITEE_LOGIN
+  INVITEE_LOGIN @deprecated(reason: "`INVITEE_LOGIN` is no longer a valid field value. Repository invitations can now be associated with an email, not only an invitee. Removal on 2020-10-01 UTC.")
 }
 
 """
@@ -30577,60 +29601,6 @@ interface RepositoryOwner {
   The username used to login.
   """
   login: String!
-
-  """
-  A list of repositories this user has pinned to their profile
-  """
-  pinnedRepositories(
-    """
-    Array of viewer's affiliation options for repositories returned from the
-    connection. For example, OWNER will include only repositories that the
-    current viewer owns.
-    """
-    affiliations: [RepositoryAffiliation]
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: String
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: String
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int
-
-    """
-    If non-null, filters repositories according to whether they have been locked
-    """
-    isLocked: Boolean
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-
-    """
-    Ordering options for repositories returned from the connection
-    """
-    orderBy: RepositoryOrder
-
-    """
-    Array of owner's affiliation options for repositories returned from the
-    connection. For example, OWNER will include only repositories that the
-    organization or user being viewed owns.
-    """
-    ownerAffiliations: [RepositoryAffiliation] = [OWNER, COLLABORATOR]
-
-    """
-    If non-null, filters repositories according to privacy
-    """
-    privacy: RepositoryPrivacy
-  ): RepositoryConnection! @deprecated(reason: "pinnedRepositories will be removed Use ProfileOwner.pinnedItems instead. Removal on 2019-10-01 UTC.")
 
   """
   A list of repositories that the user owns.
@@ -31057,11 +30027,6 @@ A alert for a repository with an affected vulnerability.
 """
 type RepositoryVulnerabilityAlert implements Node & RepositoryNode {
   """
-  The affected version
-  """
-  affectedRange: String! @deprecated(reason: "advisory specific fields are being removed from repositoryVulnerabilityAlert objects Use `securityVulnerability.vulnerableVersionRange` instead. Removal on 2019-10-01 UTC.")
-
-  """
   When was the alert created?
   """
   createdAt: DateTime!
@@ -31080,27 +30045,7 @@ type RepositoryVulnerabilityAlert implements Node & RepositoryNode {
   The user who dismissed the alert
   """
   dismisser: User
-
-  """
-  The external identifier for the vulnerability
-  """
-  externalIdentifier: String @deprecated(reason: "advisory specific fields are being removed from repositoryVulnerabilityAlert objects Use `securityAdvisory.identifiers` instead. Removal on 2019-10-01 UTC.")
-
-  """
-  The external reference for the vulnerability
-  """
-  externalReference: String! @deprecated(reason: "advisory specific fields are being removed from repositoryVulnerabilityAlert objects Use `securityAdvisory.references` instead. Removal on 2019-10-01 UTC.")
-
-  """
-  The fixed version
-  """
-  fixedIn: String @deprecated(reason: "advisory specific fields are being removed from repositoryVulnerabilityAlert objects Use `securityVulnerability.firstPatchedVersion` instead. Removal on 2019-10-01 UTC.")
   id: ID!
-
-  """
-  The affected package
-  """
-  packageName: String! @deprecated(reason: "advisory specific fields are being removed from repositoryVulnerabilityAlert objects Use `securityVulnerability.package` instead. Removal on 2019-10-01 UTC.")
 
   """
   The associated repository
@@ -33482,6 +32427,11 @@ type Team implements MemberStatusable & Node & Subscribable {
   createdAt: DateTime!
 
   """
+  Identifies the primary key from the database.
+  """
+  databaseId: Int
+
+  """
   The description of the team.
   """
   description: String
@@ -35298,6 +34248,10 @@ type TeamRepositoryEdge {
 
   """
   The permission level the team has on the repository
+
+  **Upcoming Change on 2020-10-01 UTC**
+  **Description:** Type for `permission` will change from `RepositoryPermission!` to `String`.
+  **Reason:** This field may return additional values
   """
   permission: RepositoryPermission!
 }
@@ -35493,46 +34447,6 @@ interface TopicAuditEntryData {
   The name of the topic added to the repository
   """
   topicName: String
-}
-
-"""
-The connection type for Topic.
-"""
-type TopicConnection {
-  """
-  A list of edges.
-  """
-  edges: [TopicEdge]
-
-  """
-  A list of nodes.
-  """
-  nodes: [Topic]
-
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-
-  """
-  Identifies the total count of items in the connection.
-  """
-  totalCount: Int!
-}
-
-"""
-An edge in a connection.
-"""
-type TopicEdge {
-  """
-  A cursor for use in pagination.
-  """
-  cursor: String!
-
-  """
-  The item at the end of the edge.
-  """
-  node: Topic
 }
 
 """
@@ -37966,7 +36880,7 @@ type UpdateTopicsPayload {
 """
 A user is an individual's account on GitHub that owns repositories and can make new content.
 """
-type User implements Actor & Node & PackageOwner & ProfileOwner & ProjectOwner & RegistryPackageOwner & RegistryPackageSearch & RepositoryOwner & Sponsorable & UniformResourceLocatable {
+type User implements Actor & Node & PackageOwner & ProfileOwner & ProjectOwner & RepositoryOwner & Sponsorable & UniformResourceLocatable {
   """
   Determine if this repository owner has any items that can be pinned to their profile.
   """
@@ -38405,10 +37319,15 @@ type User implements Actor & Node & PackageOwner & ProfileOwner & ProjectOwner &
     orderBy: PackageOrder = {field: CREATED_AT, direction: DESC}
 
     """
+    Filter registry package by type.
+    """
+    packageType: PackageType
+
+    """
     Find packages in a repository by ID.
     """
     repositoryId: ID
-  ): PackageConnection! @preview(toggledBy: "packages-preview")
+  ): PackageConnection!
 
   """
   A list of repositories and gists this profile owner can pin to their profile.
@@ -38474,60 +37393,6 @@ type User implements Actor & Node & PackageOwner & ProfileOwner & ProjectOwner &
   Returns how many more items this profile owner can pin to their profile.
   """
   pinnedItemsRemaining: Int!
-
-  """
-  A list of repositories this user has pinned to their profile
-  """
-  pinnedRepositories(
-    """
-    Array of viewer's affiliation options for repositories returned from the
-    connection. For example, OWNER will include only repositories that the
-    current viewer owns.
-    """
-    affiliations: [RepositoryAffiliation]
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: String
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: String
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int
-
-    """
-    If non-null, filters repositories according to whether they have been locked
-    """
-    isLocked: Boolean
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-
-    """
-    Ordering options for repositories returned from the connection
-    """
-    orderBy: RepositoryOrder
-
-    """
-    Array of owner's affiliation options for repositories returned from the
-    connection. For example, OWNER will include only repositories that the
-    organization or user being viewed owns.
-    """
-    ownerAffiliations: [RepositoryAffiliation] = [OWNER, COLLABORATOR]
-
-    """
-    If non-null, filters repositories according to privacy
-    """
-    privacy: RepositoryPrivacy
-  ): RepositoryConnection! @deprecated(reason: "pinnedRepositories will be removed Use ProfileOwner.pinnedItems instead. Removal on 2019-10-01 UTC.")
 
   """
   Find project by number.
@@ -38663,96 +37528,6 @@ type User implements Actor & Node & PackageOwner & ProfileOwner & ProjectOwner &
     """
     states: [PullRequestState!]
   ): PullRequestConnection!
-
-  """
-  A list of registry packages under the owner.
-  """
-  registryPackages(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: String
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: String
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-
-    """
-    Find registry package by name.
-    """
-    name: String
-
-    """
-    Find registry packages by their names.
-    """
-    names: [String]
-
-    """
-    Filter registry package by type.
-    """
-    packageType: RegistryPackageType
-
-    """
-    Filter registry package by whether it is publicly visible
-    """
-    publicOnly: Boolean = false
-
-    """
-    Filter registry package by type (string).
-    """
-    registryPackageType: String
-
-    """
-    Find registry packages in a repository.
-    """
-    repositoryId: ID
-  ): RegistryPackageConnection! @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageOwner` object instead. Removal on 2020-04-01 UTC.")
-
-  """
-  A list of registry packages for a particular search query.
-  """
-  registryPackagesForQuery(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: String
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: String
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-
-    """
-    Filter registry package by type.
-    """
-    packageType: RegistryPackageType
-
-    """
-    Find registry package by search query.
-    """
-    query: String
-  ): RegistryPackageConnection! @deprecated(reason: "Renaming GitHub Packages fields and objects. Use the `PackageSearch` object instead. Removal on 2020-04-01 UTC.")
 
   """
   A list of repositories that the user owns.
@@ -39055,6 +37830,11 @@ type User implements Actor & Node & PackageOwner & ProfileOwner & ProjectOwner &
     """
     since: DateTime
   ): RepositoryConnection!
+
+  """
+  The user's Twitter username.
+  """
+  twitterUsername: String
 
   """
   Identifies the date and time when the object was last updated.
