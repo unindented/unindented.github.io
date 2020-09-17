@@ -60,7 +60,8 @@ const node/*: ConcreteRequest*/ = {
         "storageKey": null
       }
     ],
-    "type": "Query"
+    "type": "Query",
+    "abstractKey": null
   },
   "kind": "Request",
   "operation": {
@@ -103,32 +104,33 @@ const node/*: ConcreteRequest*/ = {
     ]
   },
   "params": {
+    "cacheID": "999db81e7ab848249b56b1fadc2be032",
     "id": null,
     "metadata": {
       "relayTestingSelectionTypeInfo": {
         "viewer": {
-          "type": "User",
           "enumValues": null,
+          "nullable": false,
           "plural": false,
-          "nullable": false
+          "type": "User"
         },
         "viewer.id": {
-          "type": "ID",
           "enumValues": null,
+          "nullable": false,
           "plural": false,
-          "nullable": true
+          "type": "ID"
         },
         "viewer.login": {
-          "type": "String",
           "enumValues": null,
+          "nullable": false,
           "plural": false,
-          "nullable": false
+          "type": "String"
         },
         "viewer.name": {
-          "type": "String",
           "enumValues": null,
+          "nullable": true,
           "plural": false,
-          "nullable": true
+          "type": "String"
         }
       }
     },

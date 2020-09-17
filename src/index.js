@@ -1,5 +1,5 @@
 import React from "react";
-import ReactDOM from "react-dom";
+import { unstable_createRoot as createRoot } from "react-dom";
 import { RelayEnvironmentProvider } from "react-relay/hooks";
 
 import App from "./components/App";
@@ -8,13 +8,10 @@ import * as serviceWorker from "./serviceWorker";
 
 import "./index.css";
 
-ReactDOM.render(
-  <React.StrictMode>
-    <RelayEnvironmentProvider environment={environment}>
-      <App />
-    </RelayEnvironmentProvider>
-  </React.StrictMode>,
-  document.getElementById("root")
+createRoot(document.getElementById("root")).render(
+  <RelayEnvironmentProvider environment={environment}>
+    <App />
+  </RelayEnvironmentProvider>
 );
 
 serviceWorker.unregister();

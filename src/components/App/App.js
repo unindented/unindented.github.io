@@ -16,7 +16,7 @@ export const AppQuery = graphql`
 `;
 
 const App = (props) => {
-  const { viewer } = usePreloadedQuery(AppQuery, props.preloadedQuery);
+  const { viewer } = usePreloadedQuery(AppQuery, props.queryReference);
 
   return (
     <>
