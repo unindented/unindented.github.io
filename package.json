@@ -23,6 +23,7 @@
     "build:cra": "react-scripts build",
     "build": "run-s \"build:*\"",
     "test": "react-scripts test",
+    "test:debug": "react-scripts test --runInBand --no-cache",
     "eject": "react-scripts eject",
     "deploy:clean": "shx rm -rf static asset-manifest.json favicon.ico index.html \"logo*.png\" manifest.json \"precache-manifest*.js\" robots.txt service-worker.js",
     "deploy:copy": "shx cp -r \"build/*\" .",
