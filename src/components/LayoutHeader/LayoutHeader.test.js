@@ -22,10 +22,10 @@ describe("LayoutHeader", () => {
       if (error) {
         return error.message;
       }
-      if (props) {
-        return <LayoutHeader viewer={props.viewer} />;
+      if (!props) {
+        return "Loading...";
       }
-      return "Loading...";
+      return <LayoutHeader viewer={props.viewer} />;
     };
 
     const TestRenderer = () => (

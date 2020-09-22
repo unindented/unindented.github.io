@@ -1,30 +1,19 @@
-import graphql from "babel-plugin-relay/macro";
-import React from "react";
-import { usePreloadedQuery } from "react-relay/hooks";
+import React, { Suspense } from "react";
 
-import LayoutFooter from "../LayoutFooter";
-import LayoutHeader from "../LayoutHeader";
-import LayoutMain from "../LayoutMain";
+import ErrorBoundary from "../ErrorBoundary";
 
-export const AppQuery = graphql`
-  query AppQuery {
-    viewer {
-      ...LayoutHeader_viewer
-      ...LayoutFooter_viewer
-    }
-  }
-`;
+import AppError from "./AppError";
+import AppSkeleton from "./AppSkeleton";
+import AppRoutes from "./AppRoutes";
 
-const App = (props) => {
-  const { viewer } = usePreloadedQuery(AppQuery, props.queryReference);
-
+const AppRoot = () => {
   return (
-    <>
-      <LayoutHeader viewer={viewer} />
-      <LayoutMain title="Overview" />
-      <LayoutFooter viewer={viewer} />
-    </>
+    <ErrorBoundary fallback={AppError}>
+      <Suspense fallback={<AppSkeleton />}>
+        <AppRoutes />
+      </Suspense>
+    </ErrorBoundary>
   );
 };
 
-export default App;
+export default AppRoot;

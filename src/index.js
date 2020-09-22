@@ -1,6 +1,7 @@
 import React from "react";
 import { unstable_createRoot as createRoot } from "react-dom";
 import { RelayEnvironmentProvider } from "react-relay/hooks";
+import { HashRouter } from "react-router-dom";
 
 import App from "./components/App";
 import environment from "./relay/environment";
@@ -10,7 +11,9 @@ import "./index.css";
 
 createRoot(document.getElementById("root")).render(
   <RelayEnvironmentProvider environment={environment}>
-    <App />
+    <HashRouter>
+      <App />
+    </HashRouter>
   </RelayEnvironmentProvider>
 );
 

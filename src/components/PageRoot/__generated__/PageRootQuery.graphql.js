@@ -9,21 +9,21 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 type Layout_viewer$ref = any;
-export type AppQueryVariables = {||};
-export type AppQueryResponse = {|
+export type PageRootQueryVariables = {||};
+export type PageRootQueryResponse = {|
   +viewer: {|
     +$fragmentRefs: Layout_viewer$ref
   |}
 |};
-export type AppQuery = {|
-  variables: AppQueryVariables,
-  response: AppQueryResponse,
+export type PageRootQuery = {|
+  variables: PageRootQueryVariables,
+  response: PageRootQueryResponse,
 |};
 */
 
 
 /*
-query AppQuery {
+query PageRootQuery {
   viewer {
     ...Layout_viewer
     id
@@ -51,7 +51,7 @@ const node/*: ConcreteRequest*/ = {
     "argumentDefinitions": [],
     "kind": "Fragment",
     "metadata": null,
-    "name": "AppQuery",
+    "name": "PageRootQuery",
     "selections": [
       {
         "alias": null,
@@ -77,7 +77,7 @@ const node/*: ConcreteRequest*/ = {
   "operation": {
     "argumentDefinitions": [],
     "kind": "Operation",
-    "name": "AppQuery",
+    "name": "PageRootQuery",
     "selections": [
       {
         "alias": null,
@@ -121,15 +121,15 @@ const node/*: ConcreteRequest*/ = {
     ]
   },
   "params": {
-    "cacheID": "05aea2038981d702bfba9fb6b382eb3a",
+    "cacheID": "e5307b389c0b4265df1dd077e2e33309",
     "id": null,
     "metadata": {},
-    "name": "AppQuery",
+    "name": "PageRootQuery",
     "operationKind": "query",
-    "text": "query AppQuery {\n  viewer {\n    ...Layout_viewer\n    id\n  }\n}\n\nfragment LayoutFooter_viewer on User {\n  name\n  websiteUrl\n}\n\nfragment LayoutHeader_viewer on User {\n  login\n  name\n}\n\nfragment Layout_viewer on User {\n  ...LayoutHeader_viewer\n  ...LayoutFooter_viewer\n}\n"
+    "text": "query PageRootQuery {\n  viewer {\n    ...Layout_viewer\n    id\n  }\n}\n\nfragment LayoutFooter_viewer on User {\n  name\n  websiteUrl\n}\n\nfragment LayoutHeader_viewer on User {\n  login\n  name\n}\n\nfragment Layout_viewer on User {\n  ...LayoutHeader_viewer\n  ...LayoutFooter_viewer\n}\n"
   }
 };
 // prettier-ignore
-(node/*: any*/).hash = 'd615b34fcd319c1f338382095b0d38d6';
+(node/*: any*/).hash = 'a26ad3028d7835b18d44a424b38c234a';
 
 module.exports = node;

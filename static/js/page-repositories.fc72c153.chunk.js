@@ -1,0 +1,2 @@
+(this["webpackJsonpunindented-github-io"]=this["webpackJsonpunindented-github-io"]||[]).push([[3],{156:function(e,t,i){"use strict";i.r(t);var n=i(0),s=i.n(n),u=i(27);t.default=()=>s.a.createElement(u.b,{title:"Repositories"},"REPOSITORIES")}}]);
+//# sourceMappingURL=page-repositories.fc72c153.chunk.js.map

@@ -37,10 +37,10 @@
 
   --fluid-hero-min-font-size: calc(
     var(--fluid-base-min-font-size) * 5 / 4 * 5 / 4 * 5 / 4 * 5 / 4 * 5 / 4 * 5 /
-      4 * 5 / 4
+      4
   );
   --fluid-hero-max-font-size: calc(
-    var(--fluid-hero-min-font-size) * 5 / 4 * 5 / 4 * 5 / 4 * 5 / 4
+    var(--fluid-hero-min-font-size) * 5 / 4 * 5 / 4 * 5 / 4
   );
 
   --fluid-min-screen-size: 480;

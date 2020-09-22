@@ -9,21 +9,21 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 type Layout_viewer$ref = any;
-export type AppQueryVariables = {||};
-export type AppQueryResponse = {|
+export type LayoutTestQueryVariables = {||};
+export type LayoutTestQueryResponse = {|
   +viewer: {|
     +$fragmentRefs: Layout_viewer$ref
   |}
 |};
-export type AppQuery = {|
-  variables: AppQueryVariables,
-  response: AppQueryResponse,
+export type LayoutTestQuery = {|
+  variables: LayoutTestQueryVariables,
+  response: LayoutTestQueryResponse,
 |};
 */
 
 
 /*
-query AppQuery {
+query LayoutTestQuery {
   viewer {
     ...Layout_viewer
     id
@@ -51,7 +51,7 @@ const node/*: ConcreteRequest*/ = {
     "argumentDefinitions": [],
     "kind": "Fragment",
     "metadata": null,
-    "name": "AppQuery",
+    "name": "LayoutTestQuery",
     "selections": [
       {
         "alias": null,
@@ -77,7 +77,7 @@ const node/*: ConcreteRequest*/ = {
   "operation": {
     "argumentDefinitions": [],
     "kind": "Operation",
-    "name": "AppQuery",
+    "name": "LayoutTestQuery",
     "selections": [
       {
         "alias": null,
@@ -121,15 +121,48 @@ const node/*: ConcreteRequest*/ = {
     ]
   },
   "params": {
-    "cacheID": "05aea2038981d702bfba9fb6b382eb3a",
+    "cacheID": "122adced42b23360d2ed2eaa580423b2",
     "id": null,
-    "metadata": {},
-    "name": "AppQuery",
+    "metadata": {
+      "relayTestingSelectionTypeInfo": {
+        "viewer": {
+          "enumValues": null,
+          "nullable": false,
+          "plural": false,
+          "type": "User"
+        },
+        "viewer.id": {
+          "enumValues": null,
+          "nullable": false,
+          "plural": false,
+          "type": "ID"
+        },
+        "viewer.login": {
+          "enumValues": null,
+          "nullable": false,
+          "plural": false,
+          "type": "String"
+        },
+        "viewer.name": {
+          "enumValues": null,
+          "nullable": true,
+          "plural": false,
+          "type": "String"
+        },
+        "viewer.websiteUrl": {
+          "enumValues": null,
+          "nullable": true,
+          "plural": false,
+          "type": "URI"
+        }
+      }
+    },
+    "name": "LayoutTestQuery",
     "operationKind": "query",
-    "text": "query AppQuery {\n  viewer {\n    ...Layout_viewer\n    id\n  }\n}\n\nfragment LayoutFooter_viewer on User {\n  name\n  websiteUrl\n}\n\nfragment LayoutHeader_viewer on User {\n  login\n  name\n}\n\nfragment Layout_viewer on User {\n  ...LayoutHeader_viewer\n  ...LayoutFooter_viewer\n}\n"
+    "text": "query LayoutTestQuery {\n  viewer {\n    ...Layout_viewer\n    id\n  }\n}\n\nfragment LayoutFooter_viewer on User {\n  name\n  websiteUrl\n}\n\nfragment LayoutHeader_viewer on User {\n  login\n  name\n}\n\nfragment Layout_viewer on User {\n  ...LayoutHeader_viewer\n  ...LayoutFooter_viewer\n}\n"
   }
 };
 // prettier-ignore
-(node/*: any*/).hash = 'd615b34fcd319c1f338382095b0d38d6';
+(node/*: any*/).hash = 'e152ead61ed188bfaea72c3f5b9d15a5';
 
 module.exports = node;

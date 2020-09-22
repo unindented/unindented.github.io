@@ -30,9 +30,12 @@
     "deploy": "run-s \"deploy:*\""
   },
   "dependencies": {
+    "history": "5.0.0",
     "react": "experimental",
     "react-dom": "experimental",
     "react-relay": "experimental",
+    "react-router": "experimental",
+    "react-router-dom": "experimental",
     "relay-runtime": "10.0.1"
   },
   "devDependencies": {

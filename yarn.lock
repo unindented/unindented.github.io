@@ -1535,7 +1535,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.0.0, @babel/runtime@npm:^7.10.2, @babel/runtime@npm:^7.10.3, @babel/runtime@npm:^7.11.2, @babel/runtime@npm:^7.3.4, @babel/runtime@npm:^7.4.5, @babel/runtime@npm:^7.7.2, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.9.2":
+"@babel/runtime@npm:^7.0.0, @babel/runtime@npm:^7.10.2, @babel/runtime@npm:^7.10.3, @babel/runtime@npm:^7.11.2, @babel/runtime@npm:^7.3.4, @babel/runtime@npm:^7.4.5, @babel/runtime@npm:^7.7.2, @babel/runtime@npm:^7.7.6, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.9.2":
   version: 7.11.2
   resolution: "@babel/runtime@npm:7.11.2"
   dependencies:
@@ -4038,9 +4038,9 @@ __metadata:
   linkType: hard
 
 "caniuse-lite@npm:^1.0.0, caniuse-lite@npm:^1.0.30000981, caniuse-lite@npm:^1.0.30001035, caniuse-lite@npm:^1.0.30001109, caniuse-lite@npm:^1.0.30001131":
-  version: 1.0.30001131
-  resolution: "caniuse-lite@npm:1.0.30001131"
-  checksum: 3b257a6a85d9f2a3e4a2cb1562e6c931a1a14095c7b1c826db4a721411292eaae80dbf8712431dce45e2b3e3b10e3c153487f1312abed7d9602fd9d26dffdcbf
+  version: 1.0.30001133
+  resolution: "caniuse-lite@npm:1.0.30001133"
+  checksum: 670240a2d3ab33cc8bbf53fc8efc8e35c91e4ff227290f23c8f24f1999c22bac96981dd390723b0cd7d6ec416ec9ee4fe2de4c9ff06825d0c579443f511eb9c4
   languageName: node
   linkType: hard
 
@@ -5203,14 +5203,14 @@ __metadata:
   linkType: hard
 
 "debug@npm:^4.0.1, debug@npm:^4.1.0, debug@npm:^4.1.1":
-  version: 4.2.0
-  resolution: "debug@npm:4.2.0"
+  version: 4.3.0
+  resolution: "debug@npm:4.3.0"
   dependencies:
     ms: 2.1.2
   peerDependenciesMeta:
     supports-color:
       optional: true
-  checksum: dcfb8ede26b4d899628a75806923ab9ad29daae7db0f6f1ca6227b660693ae0ca085c7f87261793abe0832ad56aff2afc33f907c6b5dc96a41fc208771feb465
+  checksum: 847d2760d1493cfaef53fb67d8943c6afaba30472d7527450c19919d230dde04f2275dd8dd5c2874c7103787c190d3b5d3dbc2ee7596a12d853a2ce35c4b8b1b
   languageName: node
   linkType: hard
 
@@ -7337,6 +7337,15 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"history@npm:5.0.0":
+  version: 5.0.0
+  resolution: "history@npm:5.0.0"
+  dependencies:
+    "@babel/runtime": ^7.7.6
+  checksum: 38a8af6f31a08ddfd6b404fa6df2fcca8bd91300aa0858bdd2bf314aca0516bd37f9835c1f628e4a9113c1be4145d8e7c58f225564d8e9708a0f49c217acb47a
+  languageName: node
+  linkType: hard
+
 "hmac-drbg@npm:^1.0.0":
   version: 1.0.1
   resolution: "hmac-drbg@npm:1.0.1"
@@ -7945,9 +7954,9 @@ fsevents@^1.2.7:
   linkType: hard
 
 "is-callable@npm:^1.1.4, is-callable@npm:^1.2.0":
-  version: 1.2.1
-  resolution: "is-callable@npm:1.2.1"
-  checksum: ef2dd2e158b9feeb6243f9c946cb536c7537aceff02a66aad0f38138982a5f775bbb53b2957e85ad3a93c13b4a8b226096d5942224c18c10ca7a7f5cb06fda1c
+  version: 1.2.2
+  resolution: "is-callable@npm:1.2.2"
+  checksum: c35d37cc46c997d6417d7254733c8a3b1146f18121197c5600f601c56fb27abd1b372b0b9c41ea9a69d30556a2a0fd85e396da8eb8bc4af2e5ad8c5232fcd433
   languageName: node
   linkType: hard
 
@@ -11421,12 +11430,12 @@ fsevents@^1.2.7:
   linkType: hard
 
 "postcss-load-config@npm:^2.0.0":
-  version: 2.1.0
-  resolution: "postcss-load-config@npm:2.1.0"
+  version: 2.1.1
+  resolution: "postcss-load-config@npm:2.1.1"
   dependencies:
     cosmiconfig: ^5.0.0
     import-cwd: ^2.0.0
-  checksum: 06db8cf48d442b30b1fd99807278a0845731ae28a9a68e9c13082e6ce04d47d2729cd99909448aa12ed8a5f1ba1a8b5f63542b8e453a3ce45a786e576cba06d8
+  checksum: 020099936bbd77cc090e757445bc87f7a04c3474e5a275f829840e4ac43c16fefda5eb172dcf2ecfc8122be5c44435a344ba9fe7c5aaba192ddc379ea7fe1064
   languageName: node
   linkType: hard
 
@@ -11875,13 +11884,14 @@ fsevents@^1.2.7:
   linkType: hard
 
 "postcss-selector-parser@npm:^6.0.0, postcss-selector-parser@npm:^6.0.2":
-  version: 6.0.2
-  resolution: "postcss-selector-parser@npm:6.0.2"
+  version: 6.0.3
+  resolution: "postcss-selector-parser@npm:6.0.3"
   dependencies:
     cssesc: ^3.0.0
     indexes-of: ^1.0.1
     uniq: ^1.0.1
-  checksum: 0c8bec00e966038572228df54782ef4eefcd76902e5fc3822e6ad8f144c097c48acd9d00376d95cbbd902bfc0ecdf078e3a42eaba2679e1e43b4f91660534121
+    util-deprecate: ^1.0.2
+  checksum: 9a9cdf00d4e251673a35e09de3b97503e883d45ed7c7e4aca70f0b0dcfabf6fe5de431e4c9c131c4cd03d2c85b6f4d44c7f5707e1e55aa52a2cd2cfe6a68d723
   languageName: node
   linkType: hard
 
@@ -12382,6 +12392,32 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"react-router-dom@npm:experimental":
+  version: 0.0.0-experimental-ffd8c7d0
+  resolution: "react-router-dom@npm:0.0.0-experimental-ffd8c7d0"
+  dependencies:
+    prop-types: ^15.7.2
+    react-router: 0.0.0-experimental-ffd8c7d0
+  peerDependencies:
+    history: ">=5"
+    react: 0.0.0-experimental-33c3af284
+    react-dom: 0.0.0-experimental-33c3af284
+  checksum: 625e83058c403389b3e0135923de52d99512f47513aee9adc11819c75ac31152fb15f9c1edabbfd69f8847d97becf5d272fc23fa491958df7d2fc73054ce3bf6
+  languageName: node
+  linkType: hard
+
+"react-router@npm:0.0.0-experimental-ffd8c7d0, react-router@npm:experimental":
+  version: 0.0.0-experimental-ffd8c7d0
+  resolution: "react-router@npm:0.0.0-experimental-ffd8c7d0"
+  dependencies:
+    prop-types: ^15.7.2
+  peerDependencies:
+    history: ">=5"
+    react: 0.0.0-experimental-33c3af284
+  checksum: e634bd11bed8b0efac182c1682687461496b950b107452856c09275adfd6481a63bf959d3ea9f3b573ed5c7fb82291b47456670541a5321291491c96b8f87e13
+  languageName: node
+  linkType: hard
+
 "react-scripts@npm:3.4.3":
   version: 3.4.3
   resolution: "react-scripts@npm:3.4.3"
@@ -12692,8 +12728,8 @@ fsevents@^1.2.7:
   linkType: hard
 
 "regexpu-core@npm:^4.7.0":
-  version: 4.7.0
-  resolution: "regexpu-core@npm:4.7.0"
+  version: 4.7.1
+  resolution: "regexpu-core@npm:4.7.1"
   dependencies:
     regenerate: ^1.4.0
     regenerate-unicode-properties: ^8.2.0
@@ -12701,7 +12737,7 @@ fsevents@^1.2.7:
     regjsparser: ^0.6.4
     unicode-match-property-ecmascript: ^1.0.4
     unicode-match-property-value-ecmascript: ^1.2.0
-  checksum: 8947f4c4ac23494cb842e6a0b82f29dd76737486d78f833c1ba2436a046a134435e442a615d988c6dc6b9cdaf611aafd3627ce8d2f62a8e580f094101916cad4
+  checksum: a4d25a11cb95841325289ab8d0d43182b74cf7fce537e60718bc8b901adb4141714f8108c5d333da302e707068f0ea7be09fd5f06ef26a2b1c27b4f29177b8ab
   languageName: node
   linkType: hard
 
@@ -14729,6 +14765,7 @@ resolve@1.1.7:
     "@testing-library/user-event": 12.1.5
     babel-plugin-relay: 10.0.1
     graphql: 15.3.0
+    history: 5.0.0
     husky: 4.3.0
     identity-obj-proxy: 3.0.0
     lint-staged: 10.4.0
@@ -14737,6 +14774,8 @@ resolve@1.1.7:
     react: experimental
     react-dom: experimental
     react-relay: experimental
+    react-router: experimental
+    react-router-dom: experimental
     react-scripts: 3.4.3
     relay-compiler: 10.0.1
     relay-config: 10.0.1
@@ -14895,7 +14934,7 @@ resolve@1.1.7:
   languageName: node
   linkType: hard
 
-"util-deprecate@npm:^1.0.1, util-deprecate@npm:~1.0.1":
+"util-deprecate@npm:^1.0.1, util-deprecate@npm:^1.0.2, util-deprecate@npm:~1.0.1":
   version: 1.0.2
   resolution: "util-deprecate@npm:1.0.2"
   checksum: 73c2b1cf0210ccac300645384d8443cabbd93194117b2dc1b3bae8d8279ad39aedac857e020c4ea505e96a1045059c7359db3df6a9df0be6b8584166c9d61dc9

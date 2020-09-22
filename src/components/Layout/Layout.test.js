@@ -5,15 +5,15 @@ import { createMockEnvironment, MockPayloadGenerator } from "relay-test-utils";
 
 import { render, screen } from "../../testUtils";
 
-import LayoutFooter from "./LayoutFooter";
+import Layout from "./Layout";
 
-describe("LayoutFooter", () => {
+describe("Layout", () => {
   beforeEach(() => {
     const environment = createMockEnvironment();
     const query = graphql`
-      query LayoutFooterTestQuery @relay_test_operation {
+      query LayoutTestQuery @relay_test_operation {
         viewer {
-          ...LayoutFooter_viewer
+          ...Layout_viewer
         }
       }
     `;
@@ -25,7 +25,7 @@ describe("LayoutFooter", () => {
       if (!props) {
         return "Loading...";
       }
-      return <LayoutFooter viewer={props.viewer} />;
+      return <Layout viewer={props.viewer}>Contents</Layout>;
     };
 
     const TestRenderer = () => (
@@ -46,9 +46,15 @@ describe("LayoutFooter", () => {
     );
   });
 
-  it("renders the footer contents", () => {
-    expect(screen.getByRole("contentinfo")).toHaveTextContent(
-      "An exploration in React and Relay by {{name}}"
-    );
+  it("renders a banner element", () => {
+    expect(screen.getByRole("banner")).toBeVisible();
+  });
+
+  it("renders a footer element", () => {
+    expect(screen.getByRole("contentinfo")).toBeVisible();
+  });
+
+  it("renders its children", () => {
+    expect(screen.getByText("Contents")).toBeVisible();
   });
 });

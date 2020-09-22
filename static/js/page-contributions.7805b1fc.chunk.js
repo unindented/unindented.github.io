@@ -1,0 +1,2 @@
+(this["webpackJsonpunindented-github-io"]=this["webpackJsonpunindented-github-io"]||[]).push([[1],{154:function(t,e,n){"use strict";n.r(e);var i=n(0),u=n.n(i),o=n(27);e.default=Object(i.memo)(()=>u.a.createElement(o.b,{title:"Contributions"},"CONTRIBUTIONS"))}}]);
+//# sourceMappingURL=page-contributions.7805b1fc.chunk.js.map

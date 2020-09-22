@@ -1,15 +1,16 @@
 import React from "react";
+import { Link, NavLink } from "react-router-dom";
 
 import styles from "./LayoutHeaderCommon.module.css";
 
 const LayoutHeaderCommon = ({ login, name }) => {
   const headingContents = login ? (
-    <a href="/">
+    <Link to="/">
       {login}{" "}
       <span className="sr-only">
         (<abbr title="also known as">a.k.a.</abbr> {name})
       </span>
-    </a>
+    </Link>
   ) : (
     <span aria-hidden="true">&nbsp;</span>
   );
@@ -21,16 +22,24 @@ const LayoutHeaderCommon = ({ login, name }) => {
           <h1>{headingContents}</h1>
           <ul>
             <li>
-              <a href="#">Overview</a>
+              <NavLink to="" end activeClassName={styles.active}>
+                Overview
+              </NavLink>
             </li>
             <li>
-              <a href="#">Contributions</a>
+              <NavLink to="contributions" activeClassName={styles.active}>
+                Contributions
+              </NavLink>
             </li>
             <li>
-              <a href="#">Repositories</a>
+              <NavLink to="repositories" activeClassName={styles.active}>
+                Repositories
+              </NavLink>
             </li>
             <li>
-              <a href="#">Stars</a>
+              <NavLink to="stars" activeClassName={styles.active}>
+                Stars
+              </NavLink>
             </li>
           </ul>
         </nav>

@@ -44,6 +44,7 @@
 }
 
 .header a:focus,
-.header a:hover {
+.header a:hover,
+.header a.active {
   border-bottom: var(--border-width-l) solid;
 }
