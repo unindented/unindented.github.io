@@ -1,9 +1,23 @@
-import React, { memo } from "react";
+import graphql from "babel-plugin-relay/macro";
+import React from "react";
+import { usePreloadedQuery } from "react-relay/hooks";
 
 import LayoutMain from "../LayoutMain";
 
-const PageContributions = () => {
-  return <LayoutMain title="Contributions">CONTRIBUTIONS</LayoutMain>;
+export const PageContributionsQuery = graphql`
+  query PageContributionsQuery {
+    viewer {
+      id
+    }
+  }
+`;
+
+const PageContributions = ({ queryReference }) => {
+  const { viewer } = usePreloadedQuery(PageContributionsQuery, queryReference);
+
+  return (
+    <LayoutMain title="Contributions">{JSON.stringify(viewer)}</LayoutMain>
+  );
 };
 
-export default memo(PageContributions);
+export default PageContributions;

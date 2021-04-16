@@ -4,6 +4,7 @@ import { useFragment } from "react-relay/hooks";
 
 import LayoutFooter from "../LayoutFooter";
 import LayoutHeader from "../LayoutHeader";
+import { LayoutMainSkeleton } from "../LayoutMain";
 
 const Layout = ({ viewer, children }) => {
   const viewerFragment = useFragment(
@@ -19,7 +20,7 @@ const Layout = ({ viewer, children }) => {
   return (
     <>
       <LayoutHeader viewer={viewerFragment} />
-      <Suspense fallback="Loading...">{children}</Suspense>
+      <Suspense fallback={<LayoutMainSkeleton />}>{children}</Suspense>
       <LayoutFooter viewer={viewerFragment} />
     </>
   );
